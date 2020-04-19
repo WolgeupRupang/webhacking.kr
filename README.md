@@ -17,7 +17,7 @@ __쿠키 인젝션__
 쿠키 user_lv의 값을 조건에 맞게 바꿔야 한다.
 쿠키는 5 초과 6 미만인 값이어야 하므로, 그 사이의 값(ex 5.5)을 넣으면 성공.  
 
-![pwned](./pwned/old-01.png)  
+![pwned](./pwned/old-01.PNG)  
 <br>
   
 ## old-02**
@@ -26,7 +26,7 @@ __블라인드 SQL 인젝션__
 
 `<!-- if you access admin.php i will kick your ass -->` 따라 들어가보자.  
 
-![02-input](./pic/02-input.png)  
+![02-input](./pic/02-input.PNG)  
 
 input 필드가 나온다. admin에 접근하려면 password를 알아내야 한다.  
 페이지의 소스코드 주석의 시간과 time 쿠키를 단서로 하여  쿠키의 값을 몇 번 고쳐보니,
@@ -38,11 +38,11 @@ input 필드가 나온다. admin에 접근하려면 password를 알아내야 한
 
 __SQL 인젝션__
 
-![03-nono](./pic/03-nono.png)  
+![03-nono](./pic/03-nono.PNG)  
 
 ..? 노노그램? 답을 입력하니 다음과 같은 input 필드가 나온다. 
 
-![03-input](./pic/03-input.png)
+![03-input](./pic/03-input.PNG)
 
 소스코드를 확인해보니 hidden 필드가 있다.  
 `<form method=post action=index.php><input type=hidden name=answer value=1010100000011100101011111>`   
@@ -54,7 +54,7 @@ __SQL 인젝션__
 
 __레인보우테이블__
 
-![04-hash](./pic/04-hash.png)
+![04-hash](./pic/04-hash.PNG)
 
 해시 값을 디코딩해서 패스워드 값을 찾는 것 같다.
 
@@ -76,7 +76,7 @@ __레인보우테이블__
 
 __exploit__: [old-04.py](./code/old-04.py)
 
-![image-20200419200006285](./pic/04-rainbowtable.png)
+![image-20200419200006285](./pic/04-rainbowtable.PNG)
 
 (ㅎㄷㄷ)
 
@@ -90,11 +90,11 @@ login으로 들어가면 다음과 같이 mem 디렉터리가 노출되며 디�
 
 
 
-![05-login](./pic/05-login.png)
+![05-login](./pic/05-login.PNG)
 
 /mem으로 접속하면 접속이 거부되었던 join.php에 접근할 수 있게 된다.
 
-![05-mem](./pic/05-mem.png)
+![05-mem](./pic/05-mem.PNG)
 
 join.php의 소스코드를 보면 암호화가 되있다.
 ```javascript
@@ -122,21 +122,21 @@ js beautifulier와 console 이용해서 해석해보면 다음과 같다.
 ```
 oldzombie 쿠키가 있어야 하며 url에 mode=1이 있어야 한다는 조건을 맞춰주니 회원가입하는 창이 나타났다.
 
-![05-join](./pic/05-join.png)
+![05-join](./pic/05-join.PNG)
 
 admin으로 로그인해야 하는데 이는 이미 있는 id라고 나온다. max length를 20보다 크게 바꿔줘 아무 문자나 입력하면 이후 문자열을 자르고 admin만 받아들인다.
 
-![pwned](./pwned/old-05.png)
+![pwned](./pwned/old-05.PNG)
 
 ## old-06
 
 소스코드를 요약하면,20번 base64 인코딩하고 규칙대로 replace한 값인 user 쿠키와 password 쿠키의 값을 거꾸로 replace하고 20번 base64 디코딩한 값이 각각 admin, nimda와 같으면 풀린다.   
 쿠키에 들어갈 값을 만들어보자.  
 
-__exploit__: [old-06](./code/old-05.py)
+__exploit__: [old-06](./code/old-06.py)
 
 변환한 값을 쿠키에 넣어주면 성공.  
-![pwned](./pwned/old-06.png)
+![pwned](./pwned/old-06.PNG)
 
 <br>
 
