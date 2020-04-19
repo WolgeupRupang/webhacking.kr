@@ -1,12 +1,9 @@
-# webhacking.kr(old) write-ups
-
-
+# webhacking.kr(old) write-ups 
+<br>
 
 ## old-01
 
-### 쿠키 인젝션
-
-</br>
+__쿠키 인젝션__
 
 ```php
 <?php  
@@ -20,12 +17,12 @@
 쿠키 user_lv의 값을 조건에 맞게 바꿔야 한다.
 쿠키는 5 초과 6 미만인 값이어야 하므로, 그 사이의 값(ex 5.5)을 넣으면 성공.  
 
-![01-pwned](./pwned/old-01.png)  
+![pwned](./pwned/old-01.png)  
 <br>
   
 ## old-02**
 
-### 블라인드 SQL 인젝션  
+__블라인드 SQL 인젝션__  
 
 `<!-- if you access admin.php i will kick your ass -->` 따라 들어가보자.  
 
@@ -39,7 +36,7 @@ input 필드가 나온다. admin에 접근하려면 password를 알아내야 한
 
 ## old-03
 
-### SQL 인젝션
+__SQL 인젝션__
 
 ![03-nono](./pic/03-nono.png)  
 
@@ -55,7 +52,7 @@ input 필드가 나온다. admin에 접근하려면 password를 알아내야 한
 
 ## old-04
 
-### 레인보우테이블
+__레인보우테이블__
 
 ![04-hash](./pic/04-hash.png)
 
@@ -87,7 +84,7 @@ __exploit__: [old-04.py](./code/old-04.py)
 
 ## old-05
 
-
+__SQL 절단 공격__
 
 login으로 들어가면 다음과 같이 mem 디렉터리가 노출되며 디렉터리 인덱싱이 가능하다.
 
@@ -123,13 +120,23 @@ js beautifulier와 console 이용해서 해석해보면 다음과 같다.
 ...
 </script>
 ```
-oldzombie 쿠키가 있어야 하며 url에 mode=1이 있어야 하므로 조건을 맞춰주니 회원가입하는 창이 나타났다.
+oldzombie 쿠키가 있어야 하며 url에 mode=1이 있어야 한다는 조건을 맞춰주니 회원가입하는 창이 나타났다.
 
 ![05-join](./pic/05-join.png)
 
-admin으로 로그인해야 하는데 이는 이미 있는 id라고 나온다. max length를 20보다 크게 바꿔줘 공백 여려개와 아무 문자나 넣어주면 자동으로 admin만 잘리게 된다.
+admin으로 로그인해야 하는데 이는 이미 있는 id라고 나온다. max length를 20보다 크게 바꿔줘 아무 문자나 입력하면 이후 문자열을 자르고 admin만 받아들인다.
 
-![](./pwned/old-05.png)
+![pwned](./pwned/old-05.png)
 
 ## old-06
+
+소스코드를 요약하면,20번 base64 인코딩하고 규칙대로 replace한 값인 user 쿠키와 password 쿠키의 값을 거꾸로 replace하고 20번 base64 디코딩한 값이 각각 admin, nimda와 같으면 풀린다.   
+쿠키에 들어갈 값을 만들어보자.  
+
+__exploit__: [old-06](./code/old-05.py)
+
+변환한 값을 쿠키에 넣어주면 성공.  
+![pwned](./pwned/old-06.png)
+
+<br>
 

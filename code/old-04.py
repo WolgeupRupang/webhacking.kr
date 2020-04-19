@@ -2,7 +2,7 @@ import hashlib
 
 f = open("rainbowtable.txt",'w')
 
-for i in range(10000000, 100000000):
+for i in range(10000000, 10000010):
     session = "%dsalt_for_you" % i
     h = session
     for j in range(0,500):
