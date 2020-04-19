@@ -1,0 +1,6 @@
+#pycharm project file
+code/venv/
+code/.idea/
+
+#python txt file
+code/*.txt
