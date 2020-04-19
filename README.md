@@ -30,7 +30,7 @@ __블라인드 SQL 인젝션__
 
 input 필드가 나온다. admin에 접근하려면 password를 알아내야 한다.  
 페이지의 소스코드 주석의 시간과 time 쿠키를 단서로 하여  쿠키의 값을 몇 번 고쳐보니,
-쿠키의 값이 거짓일 때는 현재 시간이, 참일 때는  `2070-01-01 09:00:01` 시간으로 바뀜을 알 수 있다.
+쿠키에 넣은 논리값이 거짓일 때는 `2070-01-01 09:00:00`로, 참일 때는  `2070-01-01 09:00:01`로 바뀐다.
 
 <br>
 
@@ -44,11 +44,15 @@ __SQL 인젝션__
 
 ![03-input](./pic/03-input.PNG)
 
-소스코드를 확인해보니 hidden 필드가 있다.  
+소스코드를 확인해보니 answer에 들어가는 hidden 필드가 있다.  
 `<form method=post action=index.php><input type=hidden name=answer value=1010100000011100101011111>`   
-여기에 '를 넣어보니 쿼리 에러가 발생해 SQL 인젝션을 시도해 보았다.  
+여기에 '를 넣어보니 쿼리 에러가 발생해 SQL 인젝션으로 값이 항상 참이 되게 하면 성공.
 
+![03-SQL](./pic/03-SQL.PNG)
 
+![pwned](./pwned/old-03.PNG)
+
+<br>
 
 ## old-04
 
@@ -76,9 +80,11 @@ __레인보우테이블__
 
 __exploit__: [old-04.py](./code/old-04.py)
 
-![image-20200419200006285](./pic/04-rainbowtable.PNG)
+![04-rainbowtable](./pic/04-rainbowtable.PNG)
 
 (ㅎㄷㄷ)
+
+![pwned](./pwned/old-04.PNG)
 
 <br>
 
@@ -130,6 +136,8 @@ admin으로 로그인해야 하는데 이는 이미 있는 id라고 나온다. m
 
 ## old-06
 
+### base64
+
 소스코드를 요약하면,20번 base64 인코딩하고 규칙대로 replace한 값인 user 쿠키와 password 쿠키의 값을 거꾸로 replace하고 20번 base64 디코딩한 값이 각각 admin, nimda와 같으면 풀린다.   
 쿠키에 들어갈 값을 만들어보자.  
 
@@ -140,3 +148,4 @@ __exploit__: [old-06](./code/old-06.py)
 
 <br>
 
+## old-07
