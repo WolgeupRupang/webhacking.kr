@@ -161,6 +161,9 @@ $rand=rand(1,5);
 if($rand==1){
   $result=mysqli_query($db,"select lv from chall7 where lv=($go)") or die("nice try!");
 }
+if($rand==2){
+  $result=mysqli_query($db,"select lv from chall7 where lv=(($go))") or die("nice try!");
+}
 ...
 $data=mysqli_fetch_array($result);
 if(!$data[0]) { echo("query error"); exit(); }
@@ -177,7 +180,7 @@ elseif($data[0]==2){
 소스코드를 확인해보면 GET방식으로 받은 값을 정규표현식을 통해 필터링을 거쳐 5분의 1확률로 성공하는 SQL 쿼리문에 넣는 것 같다.  
 마지막 부분을 보면 $data[0]을 2로 만들어야 문제가 해결되므로 UNION을 이용해 앞의 쿼리문을 거짓으로 만들고 뒤의 쿼리문을 참으로 만들어야 한다.  
 
-따라서 `val=0)UNION SELECT 2` 와 같이 쓰고 싶은데.. 다음 정규표현식이 이를 필터링해 두가지 문제점이 있다.  
+따라서 `val=0)UNION SELECT 2` 와 같이 쓰고 싶었는데... 다음 정규표현식이 이를 필터링해 두가지 문제점이 있었다.  
 `if(preg_match("/2|-|\+|from|_|=|\\s|\*|\//i",$go)) exit("Access Denied!");`
 
 1. 띄어쓰기가 안된다. 정규표현식이 공백(\s)을 막고 있으므로 괄호를 사용해야 할듯하다.
