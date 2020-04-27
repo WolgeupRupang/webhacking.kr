@@ -20,7 +20,7 @@ __쿠키 인젝션__
 ![pwned](./pwned/old-01.PNG)  
 <br>
   
-## old-02**
+## old-02*
 
 __블라인드 SQL 인젝션__  
 
@@ -239,6 +239,41 @@ INSERT INTO chall8(agent,ip,id) VALUES('dummyagent', 'dummyip', 'admin'), ('0', 
 
 <br>
 
-# old-09
+# old-09*
 
-______
+___Blind SQL 인젝션___
+
+![main](./pic/09-main.PNG)
+
+1,2를 눌러보면 각각 Apple, Banana가 출력된다.
+
+![secret](./pic/09-secret.PNG)
+
+3을 눌러보면 다음과 같이 출력된다.
+
+SQL 인젝션이 잘 막혀있어서 Blind SQL 인젝션을 시도해야 할 것 같다.
+
+<br>
+
+# old-10
+___개발자도구___
+
+![main](./pic/10-main.PNG)
+
+(?!?!?!) ~~오바~~
+
+O 를 클릭해보면 1px씩 앞으로 간다.
+일일이 다 클릭해서 Goal 로 보낼 순 없으니 개발자도구를 이용해 위치를 바꿔보자.
+
+![hackme](./pic/10-hackme.PNG)
+
+다음과 같이 hackme 태그가 Goal을 넘어가게 되면 성공.
+
+![hacked](./pic/10-hacked.PNG)
+
+<br>
+
+# old-11
+___정규표현식___
+
+
