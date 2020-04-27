@@ -274,6 +274,117 @@ O 를 클릭해보면 1px씩 앞으로 간다.
 <br>
 
 # old-11
+
 ___정규표현식___
 
+```PHP
+<?php
+  $pat="/[1-3][a-f]{5}_.*$_SERVER[REMOTE_ADDR].*\tp\ta\ts\ts/";
+  if(preg_match($pat,$_GET['val'])){
+    solve(11);
+  }
+  else echo("<h2>Wrong</h2>");
+  echo("<br><br>");
+?>
+```
 
+GET 형식으로 전달받는 $val이 $pat 정규표현식과 일치하면 solve된다.
+
+정규표현식의 동작을 확인하자. https://regex101.com/
+
+|Code |Meaning|Example|
+|------|:----:|----:|
+|`[1-3]`|1-3의 숫자 1개|1|
+|`[a-f]{5}`|a-f의 문자 5개|aaaaa|
+|`.*x`|x 식이 0번이상 반복|x|
+|`$_SERVER[REMOTE_ADDR]`|접속자의 ip주소|218.146.29.164|
+|`\tp\ta\ts\ts`|\t는 tab이므로 URL 인코딩으로 치환|%09p%09a%09s%09s|
+
+(해당 ip주소는 문제풀이시점의 ip)
+
+![backslash](./pic/11-backslash.PNG)
+
+`1aaaaa_(ip주소)  p a s s`와 같은 값이 전달되어야 하므로 tab을 소스코드 그대로 `\t` 로 처리해보았더니 그대로 Wrong이었다. 이유는 문제에서 우리는 GET 방식으로 값을 전달하므로 tab을 URL 인코딩하여 전달해야 하기 때문이다. 
+
+![url](./pic/11-url.PNG)
+
+따라서 `?val=1aaaa_(ip주소)%09p%09a%09s%09s` 와 같이 전달해주면 성공.
+
+![pwned](./pwned/old-11.PNG)
+
+<br>
+
+# old-12
+
+___URL 파라미터 전송___
+
+```javascript
+<html>
+<head>
+<title>Challenge 12</title>
+<style type="text/css">
+body { background: black; color:white; font-size:10pt; }
+</style>
+</head>
+<body>
+<script>
+ﾟωﾟﾉ= /｀ｍ´）ﾉ ~┻━┻   //*´∇｀*/ ['_']; o=(ﾟｰﾟ)  =_=3; c=(ﾟΘﾟ) =(ﾟｰﾟ)-(ﾟｰﾟ); (ﾟДﾟ) =(ﾟΘﾟ)= (o^_^o)/ (o^_^o);(ﾟДﾟ)={ﾟΘﾟ: '_' ,ﾟωﾟﾉ : ((ﾟωﾟﾉ==3) +'_') [ﾟΘﾟ] ,ﾟｰﾟﾉ :(ﾟωﾟﾉ+ '_')[o^_^o -(ﾟΘﾟ)] ,ﾟДﾟﾉ:((ﾟｰﾟ==3) +'_')[ﾟｰﾟ] }; (ﾟДﾟ) [ﾟΘﾟ] =((ﾟωﾟﾉ==3) +'_') [c^_^o];(ﾟДﾟ) ['c'] = ((ﾟДﾟ)+'_') [ (ﾟｰﾟ)+(ﾟｰﾟ)-(ﾟΘﾟ) ];(ﾟДﾟ) ['o'] = ((ﾟДﾟ)+'_') [ﾟΘﾟ];(ﾟoﾟ)=(ﾟДﾟ) ['c']+(ﾟДﾟ) ['o']+(ﾟωﾟﾉ +'_')[ﾟΘﾟ]+ ((ﾟωﾟﾉ==3) +'_') [ﾟｰﾟ] + ((ﾟДﾟ) +'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ ((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+((ﾟｰﾟ==3) +'_') [(ﾟｰﾟ) - (ﾟΘﾟ)]+(ﾟДﾟ) ['c']+((ﾟДﾟ)+'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ (ﾟДﾟ) ['o']+((ﾟｰﾟ==3) +'_') [ﾟΘﾟ];(ﾟДﾟ) ['_'] =(o^_^o) [ﾟoﾟ] [ﾟoﾟ];(ﾟεﾟ)=((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟДﾟ) .ﾟДﾟﾉ+((ﾟДﾟ)+'_') [(ﾟｰﾟ) + (ﾟｰﾟ)]+((ﾟｰﾟ==3) +'_') [o^_^o -ﾟΘﾟ]+((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟωﾟﾉ +'_') [ﾟΘﾟ]; (ﾟｰﾟ)+=(ﾟΘﾟ); (ﾟДﾟ)[ﾟεﾟ]='\\'; (ﾟДﾟ).ﾟΘﾟﾉ=(ﾟДﾟ+ ﾟｰﾟ)[o^_^o -(ﾟΘﾟ)];(oﾟｰﾟo)=(ﾟωﾟﾉ +'_')[c^_^o];(ﾟДﾟ) [ﾟoﾟ]='\"';(ﾟДﾟ)
+...
+</body>
+</script> 
+```
+
+코드가 난독화되어있다. 구글링을 통해 ___aaencode___ 인코딩이라는 정보를 알아냈다.
+
+여기서 디코딩 할 수 있다. https://cat-in-136.github.io/2010/12/aadecode-decode-encoded-as-aaencode.html
+
+디코딩한 소스코드는 다음과 같다.
+
+```javascript
+<script>
+    var enco = '';
+    var enco2 = 126;
+    var enco3 = 33;
+    var ck = document.URL.substr(document.URL.indexOf('='));
+    for (i = 1; i < 122; i ++) {
+        enco = enco + String.fromCharCode(i, 0);
+    }
+    function enco_(x) {
+        return enco.charCodeAt(x);
+    }
+    if (ck == "=" +
+    String.fromCharCode(enco_(240)) + 
+    String.fromCharCode(enco_(220)) +
+    String.fromCharCode(enco_(232)) + 
+    String.fromCharCode(enco_(192)) + 
+    String.fromCharCode(enco_(226)) + 
+    String.fromCharCode(enco_(200)) + 
+    String.fromCharCode(enco_(204)) + 
+    String.fromCharCode(enco_(222 - 2)) + 
+    String.fromCharCode(enco_(198)) + 
+    "~~~~~~" + 
+    String.fromCharCode(enco2) + 
+    String.fromCharCode(enco3)) {
+        location.href = "./" + ck.replace("=", "") + ".php";
+    }
+</script>
+```
+
+fromCharCode(x, y)함수는 객체의 ASCII코드를 인수로 하여 xy 문자열을 구성해주는 함수이다.
+
+소스코드에서는 이를 이용하여 공백을 추가한다.
+
+`$ck`에는 짝수 인덱스마다 NULL값이 추가되어 `{ 1,NULL,2,NULL,3,NULL, ...,122, NULL }` 와 같이 저장되므로 원하는 index에 저장된 ASCII코드는 `(index + 2) / 2` 이다.
+
+따라서 위 조건문을 만족시키려면 URL에서 =뒤에 오는 값이 youaregod~~~~~~~!이 되어야 한다.
+
+![youaregod](./pic/12-youaregod.PNG)
+
+다음과 같이 URL에 파라미터를 붙여주면 성공.
+
+![pwned](./pwned/old-12.PNG)
+
+
+# old-13
+
+______
