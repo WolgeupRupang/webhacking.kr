@@ -603,9 +603,36 @@ ___base64, md5___
 
 admin 사이에 NULL문자를 넣어보면 필터링을 벗어나 로그인이 된다.
 
-![old-19](./pwned/old-19.PNG)
+![pwned](./pwned/old-19.PNG)
 
 <br>
 
 # old-20
+
+___javascript___
+
+![20-captcha](./pic/20-captcha.PNG)
+
+
+2초의 time limit 안에 값을 복사할 수 없는 captcha 까지 필드를 직접 채우기는 불가능할 것 같다.
+
+```javascript
+lv5frm.id.value=1
+lv5frm.cmt.value=1
+lv5frm.captcha.value=lv5frm.captcha_.value
+lv5frm.submit()
+```
+이를 통해 클라이언트 측에서 조작이 가능한 \<script\> 태그를 변조하자.
+
+![20-consol](./pic/20-console.PNG)
+
+reset 후에 다음 코드를 개발자 도구의 console을 이용해 재빠르게 paste 해주면 성공.
+
+![pwned](./pwned/old-20.PNG)
+
+<br>
+
+# old-21
+
+___블라인드 SQL 인젝션___
 
