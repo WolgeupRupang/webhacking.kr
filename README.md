@@ -150,7 +150,7 @@ __exploit__: [old-06.py](./code/old-06.py)
 
 ## old-07
 
-___SQL 인젝션 ___
+___SQL 인젝션___
 
 ```php
 <?php
@@ -288,7 +288,7 @@ ___정규표현식___
 ?>
 ```
 
-GET 형식으로 전달받는 $val이 $pat 정규표현식과 일치하면 solve된다.
+GET 형식으로 전달받는 `$val`이 `$pat` 정규표현식과 일치하면 solve된다.
 
 정규표현식의 동작을 확인하자. https://regex101.com/
 
@@ -334,7 +334,7 @@ body { background: black; color:white; font-size:10pt; }
 </script> 
 ```
 
-코드가 난독화되어있다. 구글링을 통해 ___aaencode___ 인코딩이라는 정보를 알아냈다.
+구글링을 통해 ___aaencode___ 인코딩으로 난독화되어 있다는 것을 알아냈다.
 
 여기서 디코딩 할 수 있다. https://cat-in-136.github.io/2010/12/aadecode-decode-encoded-as-aaencode.html
 
@@ -384,7 +384,44 @@ fromCharCode(x, y)함수는 객체의 ASCII코드를 인수로 하여 xy 문자�
 
 ![pwned](./pwned/old-12.PNG)
 
+<br>
 
 # old-13
 
+___블라인드 SQL 인젝션___
+
+
+<br>
+
+# old-14 
+
 ______
+
+![14-field](./pic/14-field.PNG)
+
+다음과 같은 필드만 덩그러니 있다.
+
+```javascript
+...
+<form name=pw><input type=text name=input_pwd><input type=button value="check" onclick=ck()></form>
+<script>
+function ck(){
+  var ul=document.URL;
+  ul=ul.indexOf(".kr");
+  ul=ul*30;
+  if(ul==pw.input_pwd.value) { location.href="?"+ul*pw.input_pwd.value; }
+  else { alert("Wrong"); }
+}
+</script>
+...
+```
+
+소스코드를 확인해보니 필드에 입력되는 값이 ul과 똑같아야 Wrong이 나오지 않을 것 같다. 
+URL에서 ".kr"의 인덱스는 18이고, 여기에 30을 곱하면 540이므로, 이를 필드에 넣어주면 성공.
+
+![pwned](./pwned/old-14.PNG)
+
+<br>
+
+# old-15
+
