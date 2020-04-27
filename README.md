@@ -1,4 +1,4 @@
-# webhacking.kr(old) write-ups 
+# webhacking.kr (old) writeup 
 <br>
 
 ## old-01
@@ -455,4 +455,63 @@ ___javascript___
 
 # old 16
 
-______
+___javascript___
+
+![16-star](./pic/16-star.PNG)
+
+...별?
+
+```javascript
+<script> 
+document.body.innerHTML+="<font color=yellow id=aa style=position:relative;left:0;top:0>*</font>";
+function mv(cd){
+  kk(star.style.left-50,star.style.top-50);
+  if(cd==100) star.style.left=parseInt(star.style.left+0,10)+50+"px";
+  if(cd==97) star.style.left=parseInt(star.style.left+0,10)-50+"px";
+  if(cd==119) star.style.top=parseInt(star.style.top+0,10)-50+"px";
+  if(cd==115) star.style.top=parseInt(star.style.top+0,10)+50+"px";
+  if(cd==124) location.href=String.fromCharCode(cd)+".php"; // do it!
+}
+function kk(x,y){
+  rndc=Math.floor(Math.random()*9000000);
+  document.body.innerHTML+="<font color=#"+rndc+" id=aa style=position:relative;left:"+x+";top:"+y+" onmouseover=this.innerHTML=''>*</font>";
+}
+</script>
+```
+
+소스코드를 확인해 보면 마지막 if문에서 `location.href=String.fromCharCode(cd)+".php";` 
+
+를 실행시키므로, | 를 입력해주면 다음과 같은 페이지로 이동하면서 성공.
+
+![pwned](./pwned/old-16.PNG)
+
+<br>
+
+# old-17
+ 
+___javascript___
+
+![17-field](./pic/17-field.PNG)
+
+필드만 덩그러니 출력되어 있다.
+
+
+```javascript
+...
+<script>
+unlock=100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+1/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10+100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10-100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10/100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10*100*10*10+100/10-10+10+50-9*8+7-6+5-4*3-2*1*10+9999999;
+function sub(){ if(login.pw.value==unlock){ location.href="?"+unlock/10; } else{ alert("Wrong"); } }
+</script>
+```
+
+소스코드를 확인하니 unlock의 값을 필드에 넣어주면 solve 페이지로 이동할 것 같다.
+
+![17-console](./pic/17-console.PNG)
+
+저 식을 전부 계산할 수는 없으므로 개발자도구 - console 에서 unlock의 값을 알아내 이를 입력하면 성공.
+
+![pwned](./pwned/old-17.PNG)
+
+<br>
+
+#
