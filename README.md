@@ -665,4 +665,52 @@ ___URL 인코딩___
 
 ![pwned](./pwned/old-23.PNG)
 
-<>
+<br>
+
+# old-24
+
+___쿠키 인젝션___
+
+
+```PHP
+<?php
+  extract($_SERVER);
+  extract($_COOKIE);
+...
+  if($REMOTE_ADDR){
+    $ip = htmlspecialchars($REMOTE_ADDR);
+    $ip = str_replace("..",".",$ip);
+    $ip = str_replace("12","",$ip);
+    $ip = str_replace("7.","",$ip);
+    $ip = str_replace("0.","",$ip);
+  }
+  if($HTTP_USER_AGENT){
+    $agent=htmlspecialchars($HTTP_USER_AGENT);
+  }
+  echo "<table border=1><tr><td>client ip</td><td>{$ip}</td></tr><tr><td>agent</td><td>{$agent}</td></tr></table>";
+  if($ip=="127.0.0.1"){
+    solve(24);
+    exit();
+...
+?>
+```
+
+소스코드에 따르면 `$REMOTE_ADDR == 112277...00...00...1`일 때 solve가 작동한다.
+
+그러나 `$_SERVER[REMOTE_ADDR]` 값은 바꿀 수가 없다!
+
+extract() 함수를 보면, `$_SERVER` 환경변수와 `$_COOKIE` 환경변수 배열 속의 키값을 변수화시켜준다는 것을 보아,
+
+ `REMOTE_ADDR`를 이름으로 하는 쿠키를 삽입해야겠다는 생각이 든다.
+
+![24-cookie](./pwned/24-cookie.PNG)
+
+다음과 같이 삽입하고 새로고침하면 성공.
+
+![pwned](./pwned/old-24.PNG)
+
+<br>
+
+# old-25
+
+______
