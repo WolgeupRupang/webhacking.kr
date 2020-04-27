@@ -429,11 +429,11 @@ ___javascript___
 
 접속하면 다음과 같은 alert와 함께 webhacking.kr Index page로 이동한다.
 
-![access_denied](./pic/access_denied.PNG)
+![15-access_denied](./pic/15-access_denied.PNG)
 
 사용하는 브라우저 설정에서 자바스크립트를 차단하면 정상적으로 접속할 수 있다.
 
-![javascript](./pic/javascript.PNG)
+![15-javascript](./pic/15-javascript.PNG)
 
 ```javascript
 ...
@@ -557,3 +557,55 @@ SELECT id FROM chall18 WHERE id='guest' and no=1 or 1=1 LIMIT 1,1
 ![18-sql](./pic/18-url.PNG)
 
 ![old-18](./pwned/old-18.PNG)
+
+<br>
+
+# old-19
+
+___base64, md5___
+
+로그인 창에 admin을 넣으면 'you are not admin'이라며 거부당한다.
+다른 문자 (ex 1)등은 잘 로그인이 된다.
+
+![19-cookie](./pic/19-cookie.PNG)
+
+1로 로그인하니 userid 쿠키가 추가된 것을 볼 수 있다.
+
+`YzRjYTQyMzhhMGI5MjM4MjBkY2M1MDlhNmY3NTg0OWI%3D` 
+
+쿠키값의 마지막에는 %3d가 있으므로 base64 인코딩이 되어 있음을 알 수 있다.
+
+%3d를 =로 바꾸어 base64 디코딩을 해보자. https://www.base64decode.org/
+
+`c4ca4238a0b923820dcc509a6f75849b`
+
+이 값을 md5 디코딩하면 https://www.md5online.org/md5-decrypt.html 
+
+1이 나온다! 또한 11을 필드에 넣고 쿠키를 base64 디코딩하면
+
+`c4ca4238a0b923820dcc509a6f75849bc4ca4238a0b923820dcc509a6f75849b` 
+
+이 나오는데, md5는 32자리 문자열을 반환하는 해시이므로, md5 암호화한 두 문자가 합쳐졌다는 추론을 할 수 있다. 
+
+따라서 이를 역순으로 진행하여 
+
+1. a, d, m, i, n 각각을 md5 인코딩 0cc175b9c0f1b6a831c399e269772661
+2. 위 값을 합쳐 base64 인코딩 
+3. =을 %3D로 변경 
+
+`MGNjMTc1YjljMGYxYjZhODMxYzM5OWUyNjk3NzI2NjE4Mjc3ZTA5MTBkNzUwMTk1YjQ0ODc5NzYxNmUwOTFhZDZmOGY1NzcxNTA5MGRhMjYzMjQ1Mzk4OGQ5YTE1MDFiODY1YzBjMGI0YWIwZTA2M2U1Y2FhMzM4N2MxYTg3NDE3YjhiOTY1YWQ0YmNhMGU0MWFiNTFkZTdiMzEzNjNhMQ%3D%3D`
+
+결과값을 값을 쿠키에 넣어주면 성공.
+
+<다른 풀이>
+
+![19-null](./pic/19-null.PNG)
+
+admin 사이에 NULL문자를 넣어보면 필터링을 벗어나 로그인이 된다.
+
+![old-19](./pwned/old-19.PNG)
+
+<br>
+
+# old-20
+
