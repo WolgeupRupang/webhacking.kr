@@ -316,7 +316,7 @@ GET 형식으로 전달받는 `$val`이 `$pat` 정규표현식과 일치하면 s
 
 # old-12
 
-___URL 파라미터 전송___
+___javascript___
 
 ```javascript
 <html>
@@ -395,7 +395,7 @@ ___블라인드 SQL 인젝션___
 
 # old-14 
 
-______
+___javascript___
 
 ![14-field](./pic/14-field.PNG)
 
@@ -425,3 +425,34 @@ URL에서 ".kr"의 인덱스는 18이고, 여기에 30을 곱하면 540이므로
 
 # old-15
 
+___javascript___
+
+접속하면 다음과 같은 alert와 함께 webhacking.kr Index page로 이동한다.
+
+![access_denied](./pic/access_denied.PNG)
+
+사용하는 브라우저 설정에서 자바스크립트를 차단하면 정상적으로 접속할 수 있다.
+
+![javascript](./pic/javascript.PNG)
+
+```javascript
+...
+<script>
+  alert("Access_Denied");
+  location.href='/';
+  document.write("<a href=?getFlag>[Get Flag]</a>");
+</script>
+...
+```
+
+소스코드를 확인해 보니 javascript가 /?getFlag로 접속하는 a태그를 만들어 주는 간단한 코드였다.
+
+직접 해당 경로로 접속하면 성공.
+
+![pwned](./pwned/old-15.PNG)
+
+<br>
+
+# old 16
+
+______
