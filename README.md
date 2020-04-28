@@ -723,7 +723,7 @@ ___PHP Wrapper___
 
 FLAG는 소스코드 안에 있는 것 같다. 그러나 php 소스코드는 노출되지 않으므로...
 
-PHP Wrapper를 이용한다. php://filter wrapper를 사용하여 사용하여 서버 안에 존재하는 문서들을 열람할 수 있다.
+**PHP Wrapper**를 이용한다. php://filter wrapper를 사용하여 사용하여 서버 안에 존재하는 문서들을 열람할 수 있다.
 
 `php://filter/convert.base64-encode/resource=` 명령으로 페이지의 php 소스코드를 base64방식으로 인코딩하여 긁어올 수 있다.
 
@@ -741,4 +741,44 @@ flag = FLAG{this_is_your_first_flag}
 
 # old-26
 
-______
+___더블 인코딩___
+
+```PHP
+<?php
+  if(preg_match("/admin/",$_GET['id'])) { echo"no!"; exit(); }
+  $_GET['id'] = urldecode($_GET['id']);
+  if($_GET['id'] == "admin"){
+    solve(26);
+  }
+?>
+```
+
+GET 방식으로 입력받는 id값을 url decoding을 했을 때 admin이 되어야 하는 동시에, admin이 그대로 있으면 필터링을 한다.
+
+![26-encoding](./pic/26-encoding.jpg)
+
+admin을 url 인코딩하면 될 듯해서 인코딩 표를 참고해서 인코딩 해봤다.
+
+admin -> %61%64%6d%69%6e
+
+![26-input1](./pic/26-input1.PNG)
+
+다음과 같이 넣어봤는데...
+
+![26-no](./pic/26-no.PNG)
+
+no! 라고 뜬다. 주소창은 admin으로 바뀌어있는 걸 볼때
+
+**웹 서버와 브라우저 사이에서 데이터 교환 시 브라우저는 폼에서 입력받은 데이터를 자동으로 인코딩한 값을 PHP서버로 보내고 PHP는 받은 인코딩된 값을 자동으로 디코딩한다.**
+
+위와 같은 이유일 것 같다. 이 값을 서버에서 한번 더 필터링하고 디코딩하는 과정을 거치므로 이 값을 한번 더 인코딩(더블 인코딩) 해주어야 우회할 수 있다.
+
+따라서 다음과 같이 admin을 더블 URL 인코딩 해주어 입력하면 성공.
+
+![pwned](./pwned/old-26.PNG)
+
+<br>
+
+# old-27
+
+___SQL 인젝션___
