@@ -713,4 +713,32 @@ extract() 함수를 보면, `$_SERVER` 환경변수와 `$_COOKIE` 환경변수 �
 
 # old-25
 
+___PHP Wrapper___
+
+![25-hello](./pic/25-hello.PNG)
+
+주소창을 보면 GET 방식으로 파일명을 받아와 (파일명).php로 접속하는 것 같다. falg로 접속해보자.
+
+![25-flag](./pic/25-flag.PNG)
+
+FLAG는 소스코드 안에 있는 것 같다. 그러나 php 소스코드는 노출되지 않으므로...
+
+PHP Wrapper를 이용한다. php://filter wrapper를 사용하여 사용하여 서버 안에 존재하는 문서들을 열람할 수 있다.
+
+`php://filter/convert.base64-encode/resource=` 명령으로 페이지의 php 소스코드를 base64방식으로 인코딩하여 긁어올 수 있다.
+
+![25-wrapper](./pic/25-wrapper.PNG)
+
+이와 같이 사용하여 얻은 코드를 base64 디코딩하자. https://www.base64decode.org/
+
+![25-base64decode](./pic/25-base64decode.PNG)
+
+flag = FLAG{this_is_your_first_flag}
+
+![pwned](./pwned/old-25.PNG)
+
+<br>
+
+# old-26
+
 ______
